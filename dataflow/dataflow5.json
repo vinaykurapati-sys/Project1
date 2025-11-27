@@ -1,0 +1,91 @@
+{
+	"name": "dataflow5",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "lk_storage_adls",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "lk_storage_adls",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          employee as (id as short, name as string, salary as integer)[],",
+				"          grade as short,",
+				"          id as integer,",
+				"          role as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'json',",
+				"     container: 'input',",
+				"     fileName: 'students.json',",
+				"     documentForm: 'singleDocument') ~> source1",
+				"source1 foldDown(unroll(employee, employee),",
+				"     mapColumn(",
+				"          employee_id = employee.id,",
+				"          grade,",
+				"          id,",
+				"          role,",
+				"          emp_name = employee.name,",
+				"          emp_salary = employee.salary",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          employee_id as integer,",
+				"          grade as integer,",
+				"          role as string,",
+				"          name as string,",
+				"          salary as integer",
+				"     ),",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employee',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          id,",
+				"          employee_id,",
+				"          grade = emp_name,",
+				"          role,",
+				"          name = emp_name,",
+				"          salary = emp_salary",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

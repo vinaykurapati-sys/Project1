@@ -1,0 +1,126 @@
+{
+	"name": "dataflow3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "lk_storage_adls",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "exists1"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          CustomerName as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'Customers',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> source1",
+				"source(output(",
+				"          OrderID as integer,",
+				"          CustomerID as integer,",
+				"          OrderDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'Orders',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> source2",
+				"exists1 cast(output(",
+				"          CustomerID as integer",
+				"     ),",
+				"     errors: false) ~> cast1",
+				"source1 derive(isactive = 'true') ~> derivedColumn1",
+				"select1, source2 exists(select1@CustomerID == source2@CustomerID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1",
+				"source1, source2 lookup(source1@CustomerID == source2@CustomerID,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(source2@CustomerID, true),",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 select(mapColumn(",
+				"          CustomerID = source1@CustomerID,",
+				"          CustomerName,",
+				"          City,",
+				"          OrderID,",
+				"          CustomerID = source2@CustomerID,",
+				"          OrderDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn1 alterRow(upsertIf(CustomerID==1)) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerID as integer,",
+				"          CustomerName as string,",
+				"          City as string",
+				"     ),",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'Customers',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: true,",
+				"     keys:['CustomerID'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

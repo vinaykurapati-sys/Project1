@@ -1,0 +1,160 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "customer"
+				},
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "salesorderheader"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "lk_storage_adls",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          NameStyle as integer,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          PasswordHash as string,",
+				"          PasswordSalt as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'SalesLT',",
+				"     tableName: 'Customer',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     partitionBy('hash', 1)) ~> customer",
+				"source(output(",
+				"          SalesOrderID as integer,",
+				"          RevisionNumber as integer,",
+				"          OrderDate as timestamp,",
+				"          DueDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          OnlineOrderFlag as integer,",
+				"          SalesOrderNumber as string,",
+				"          PurchaseOrderNumber as string,",
+				"          AccountNumber as string,",
+				"          CustomerID as integer,",
+				"          ShipToAddressID as integer,",
+				"          BillToAddressID as integer,",
+				"          ShipMethod as string,",
+				"          CreditCardApprovalCode as string,",
+				"          SubTotal as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          Freight as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          Comment as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'SalesLT',",
+				"     tableName: 'SalesOrderHeader',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     partitionBy('hash', 1)) ~> salesorderheader",
+				"customer, salesorderheader join(customer@CustomerID == salesorderheader@CustomerID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 filter(!isNull(salesorderheader@CustomerID)) ~> filter1",
+				"derivedColumn1 select(mapColumn(",
+				"          CustomerID = customer@CustomerID,",
+				"          Title,",
+				"          Suffix,",
+				"          CompanyName,",
+				"          SalesPerson,",
+				"          EmailAddress,",
+				"          Phone,",
+				"          PasswordHash,",
+				"          PasswordSalt,",
+				"          rowguid = customer@rowguid,",
+				"          ModifiedDate = customer@ModifiedDate,",
+				"          SalesOrderID,",
+				"          RevisionNumber,",
+				"          OrderDate,",
+				"          DueDate,",
+				"          ShipDate,",
+				"          Status,",
+				"          SalesOrderNumber,",
+				"          PurchaseOrderNumber,",
+				"          AccountNumber,",
+				"          CustomerID = salesorderheader@CustomerID,",
+				"          ShipToAddressID,",
+				"          BillToAddressID,",
+				"          ShipMethod,",
+				"          SubTotal,",
+				"          TaxAmt,",
+				"          Freight,",
+				"          TotalDue,",
+				"          ModifiedDate = salesorderheader@ModifiedDate,",
+				"          fullname",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"filter1 derive(fullname = trim(replace(concat(FirstName, ' ', coalesce(MiddleName, ' '),' ',LastName),' ',' '))) ~> derivedColumn1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'output',",
+				"     folderPath: 'newfolder',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['customerdata.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

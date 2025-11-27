@@ -1,0 +1,9 @@
+{
+	"name": "PracticeDF-01",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "350a355c-2d40-4aa9-8285-1d0ffe4e3971",
+		"tenantId": "a63ba985-5961-444e-9d50-f2bf6cfedb67"
+	}
+}

@@ -1,0 +1,199 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "employeesusa"
+				},
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "employeecanada"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"linkedService": {
+						"referenceName": "lk_server_sample",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink3"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "spliHR"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          firstname as string,",
+				"          lastname as string,",
+				"          dept as string,",
+				"          salary as decimal(10,2),",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employees_usa',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> employeesusa",
+				"source(output(",
+				"          id as integer,",
+				"          firstname as string,",
+				"          lastname as string,",
+				"          dept as string,",
+				"          salary as decimal(10,2),",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employees_canada',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> employeecanada",
+				"employeesusa, employeecanada union(byName: true)~> union1",
+				"union1 split(dept == 'Finance',",
+				"     disjoint: false) ~> split1@(Finance, bad)",
+				"union1 select(partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"split1@bad select(mapColumn(",
+				"          id,",
+				"          firstname,",
+				"          lastname,",
+				"          dept,",
+				"          salary,",
+				"          country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 split(dept == 'HR',",
+				"     disjoint: false) ~> spliHR@(HR, Others)",
+				"split1@Finance sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          firstname as string,",
+				"          lastname as string,",
+				"          dept as string,",
+				"          salary as decimal(10,2),",
+				"          country as string",
+				"     ),",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employees_Finance',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          firstname,",
+				"          lastname,",
+				"          dept,",
+				"          salary,",
+				"          country",
+				"     )) ~> sink1",
+				"spliHR@HR sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          firstname as string,",
+				"          lastname as string,",
+				"          dept as string,",
+				"          salary as decimal(10,2),",
+				"          country as string",
+				"     ),",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employees_HR',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          firstname,",
+				"          lastname,",
+				"          dept,",
+				"          salary,",
+				"          country",
+				"     )) ~> sink2",
+				"spliHR@Others sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          firstname as string,",
+				"          lastname as string,",
+				"          dept as string,",
+				"          salary as decimal(10,2),",
+				"          country as string",
+				"     ),",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'employees_Other_dept',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          firstname,",
+				"          lastname,",
+				"          dept,",
+				"          salary,",
+				"          country",
+				"     )) ~> sink3"
+			]
+		}
+	}
+}
