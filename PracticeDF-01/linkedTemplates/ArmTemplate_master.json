@@ -1,0 +1,119 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "PracticeDF-01"
+		},
+		"lk_practice_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'lk_practice'"
+		},
+		"lk_server_db_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lk_server_db'"
+		},
+		"lk_server_sample_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lk_server_sample'"
+		},
+		"lk_storage_adls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lk_storage_adls'"
+		},
+		"lk_practice_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://blobv01.dfs.core.windows.net/"
+		},
+		"lk_server_db_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "internal1.database.windows.net"
+		},
+		"lk_server_db_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "db_practice"
+		},
+		"lk_server_db_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Single"
+		},
+		"lk_server_sample_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "internal1.database.windows.net"
+		},
+		"lk_server_sample_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Sample"
+		},
+		"lk_server_sample_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Single"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "PracticeDF-01_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"lk_practice_accountKey": {
+						"value": "[parameters('lk_practice_accountKey')]"
+					},
+					"lk_server_db_password": {
+						"value": "[parameters('lk_server_db_password')]"
+					},
+					"lk_server_sample_password": {
+						"value": "[parameters('lk_server_sample_password')]"
+					},
+					"lk_storage_adls_connectionString": {
+						"value": "[parameters('lk_storage_adls_connectionString')]"
+					},
+					"lk_practice_properties_typeProperties_url": {
+						"value": "[parameters('lk_practice_properties_typeProperties_url')]"
+					},
+					"lk_server_db_properties_typeProperties_server": {
+						"value": "[parameters('lk_server_db_properties_typeProperties_server')]"
+					},
+					"lk_server_db_properties_typeProperties_database": {
+						"value": "[parameters('lk_server_db_properties_typeProperties_database')]"
+					},
+					"lk_server_db_properties_typeProperties_userName": {
+						"value": "[parameters('lk_server_db_properties_typeProperties_userName')]"
+					},
+					"lk_server_sample_properties_typeProperties_server": {
+						"value": "[parameters('lk_server_sample_properties_typeProperties_server')]"
+					},
+					"lk_server_sample_properties_typeProperties_database": {
+						"value": "[parameters('lk_server_sample_properties_typeProperties_database')]"
+					},
+					"lk_server_sample_properties_typeProperties_userName": {
+						"value": "[parameters('lk_server_sample_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

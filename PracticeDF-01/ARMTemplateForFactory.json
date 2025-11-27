@@ -1,0 +1,1222 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "PracticeDF-01"
+		},
+		"lk_practice_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'lk_practice'"
+		},
+		"lk_server_db_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lk_server_db'"
+		},
+		"lk_server_sample_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'lk_server_sample'"
+		},
+		"lk_storage_adls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lk_storage_adls'"
+		},
+		"lk_practice_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://blobv01.dfs.core.windows.net/"
+		},
+		"lk_server_db_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "internal1.database.windows.net"
+		},
+		"lk_server_db_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "db_practice"
+		},
+		"lk_server_db_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Single"
+		},
+		"lk_server_sample_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "internal1.database.windows.net"
+		},
+		"lk_server_sample_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Sample"
+		},
+		"lk_server_sample_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Single"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowpipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"customer": {},
+									"salesorderheader": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-14T14:08:23Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow2",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"employeesusa": {},
+									"employeecanada": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-15T15:27:54Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow3",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-16T22:44:32Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow4",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-18T13:05:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline4')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow5",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-18T13:05:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow5')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline5')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Binary1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lk_practice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_practice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lk_practice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lk_practice_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('lk_practice_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lk_server_db')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('lk_server_db_properties_typeProperties_server')]",
+					"database": "[parameters('lk_server_db_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('lk_server_db_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('lk_server_db_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lk_server_sample')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('lk_server_sample_properties_typeProperties_server')]",
+					"database": "[parameters('lk_server_sample_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('lk_server_sample_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('lk_server_sample_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lk_storage_adls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('lk_storage_adls_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "customer"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "salesorderheader"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as integer,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'SalesLT',",
+						"     tableName: 'Customer',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     partitionBy('hash', 1)) ~> customer",
+						"source(output(",
+						"          SalesOrderID as integer,",
+						"          RevisionNumber as integer,",
+						"          OrderDate as timestamp,",
+						"          DueDate as timestamp,",
+						"          ShipDate as timestamp,",
+						"          Status as integer,",
+						"          OnlineOrderFlag as integer,",
+						"          SalesOrderNumber as string,",
+						"          PurchaseOrderNumber as string,",
+						"          AccountNumber as string,",
+						"          CustomerID as integer,",
+						"          ShipToAddressID as integer,",
+						"          BillToAddressID as integer,",
+						"          ShipMethod as string,",
+						"          CreditCardApprovalCode as string,",
+						"          SubTotal as decimal(19,4),",
+						"          TaxAmt as decimal(19,4),",
+						"          Freight as decimal(19,4),",
+						"          TotalDue as decimal(19,4),",
+						"          Comment as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'SalesLT',",
+						"     tableName: 'SalesOrderHeader',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     partitionBy('hash', 1)) ~> salesorderheader",
+						"customer, salesorderheader join(customer@CustomerID == salesorderheader@CustomerID,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 filter(!isNull(salesorderheader@CustomerID)) ~> filter1",
+						"derivedColumn1 select(mapColumn(",
+						"          CustomerID = customer@CustomerID,",
+						"          Title,",
+						"          Suffix,",
+						"          CompanyName,",
+						"          SalesPerson,",
+						"          EmailAddress,",
+						"          Phone,",
+						"          PasswordHash,",
+						"          PasswordSalt,",
+						"          rowguid = customer@rowguid,",
+						"          ModifiedDate = customer@ModifiedDate,",
+						"          SalesOrderID,",
+						"          RevisionNumber,",
+						"          OrderDate,",
+						"          DueDate,",
+						"          ShipDate,",
+						"          Status,",
+						"          SalesOrderNumber,",
+						"          PurchaseOrderNumber,",
+						"          AccountNumber,",
+						"          CustomerID = salesorderheader@CustomerID,",
+						"          ShipToAddressID,",
+						"          BillToAddressID,",
+						"          ShipMethod,",
+						"          SubTotal,",
+						"          TaxAmt,",
+						"          Freight,",
+						"          TotalDue,",
+						"          ModifiedDate = salesorderheader@ModifiedDate,",
+						"          fullname",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"filter1 derive(fullname = trim(replace(concat(FirstName, ' ', coalesce(MiddleName, ' '),' ',LastName),' ',' '))) ~> derivedColumn1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     container: 'output',",
+						"     folderPath: 'newfolder',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['customerdata.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]",
+				"[concat(variables('factoryId'), '/linkedServices/lk_storage_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "employeesusa"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "employeecanada"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink3"
+						}
+					],
+					"transformations": [
+						{
+							"name": "union1"
+						},
+						{
+							"name": "split1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "spliHR"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as integer,",
+						"          firstname as string,",
+						"          lastname as string,",
+						"          dept as string,",
+						"          salary as decimal(10,2),",
+						"          country as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employees_usa',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> employeesusa",
+						"source(output(",
+						"          id as integer,",
+						"          firstname as string,",
+						"          lastname as string,",
+						"          dept as string,",
+						"          salary as decimal(10,2),",
+						"          country as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employees_canada',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> employeecanada",
+						"employeesusa, employeecanada union(byName: true)~> union1",
+						"union1 split(dept == 'Finance',",
+						"     disjoint: false) ~> split1@(Finance, bad)",
+						"union1 select(partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"split1@bad select(mapColumn(",
+						"          id,",
+						"          firstname,",
+						"          lastname,",
+						"          dept,",
+						"          salary,",
+						"          country",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select2 split(dept == 'HR',",
+						"     disjoint: false) ~> spliHR@(HR, Others)",
+						"split1@Finance sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstname as string,",
+						"          lastname as string,",
+						"          dept as string,",
+						"          salary as decimal(10,2),",
+						"          country as string",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employees_Finance',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          firstname,",
+						"          lastname,",
+						"          dept,",
+						"          salary,",
+						"          country",
+						"     )) ~> sink1",
+						"spliHR@HR sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstname as string,",
+						"          lastname as string,",
+						"          dept as string,",
+						"          salary as decimal(10,2),",
+						"          country as string",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employees_HR',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          firstname,",
+						"          lastname,",
+						"          dept,",
+						"          salary,",
+						"          country",
+						"     )) ~> sink2",
+						"spliHR@Others sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstname as string,",
+						"          lastname as string,",
+						"          dept as string,",
+						"          salary as decimal(10,2),",
+						"          country as string",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employees_Other_dept',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          firstname,",
+						"          lastname,",
+						"          dept,",
+						"          salary,",
+						"          country",
+						"     )) ~> sink3"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow3')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "lookup1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerID as integer,",
+						"          CustomerName as string,",
+						"          City as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'Customers',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> source1",
+						"source(output(",
+						"          OrderID as integer,",
+						"          CustomerID as integer,",
+						"          OrderDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'Orders',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> source2",
+						"exists1 cast(output(",
+						"          CustomerID as integer",
+						"     ),",
+						"     errors: false) ~> cast1",
+						"source1 derive(isactive = 'true') ~> derivedColumn1",
+						"select1, source2 exists(select1@CustomerID == source2@CustomerID,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"source1, source2 lookup(source1@CustomerID == source2@CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'first',",
+						"     asc(source2@CustomerID, true),",
+						"     broadcast: 'auto')~> lookup1",
+						"lookup1 select(mapColumn(",
+						"          CustomerID = source1@CustomerID,",
+						"          CustomerName,",
+						"          City,",
+						"          OrderID,",
+						"          CustomerID = source2@CustomerID,",
+						"          OrderDate",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"derivedColumn1 alterRow(upsertIf(CustomerID==1)) ~> AlterRow1",
+						"AlterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          CustomerID as integer,",
+						"          CustomerName as string,",
+						"          City as string",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'Customers',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: true,",
+						"     keys:['CustomerID'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]",
+				"[concat(variables('factoryId'), '/linkedServices/lk_storage_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow4')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "alterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          A as short,",
+						"          B as short,",
+						"          C as short",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     container: 'input',",
+						"     fileName: 'simple_table (1).csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> source1",
+						"source1 alterRow(upsertIf(1==1)) ~> alterRow1",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          A as integer,",
+						"          B as integer,",
+						"          C as integer",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'SampleTable',",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: true,",
+						"     keys:['A'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_storage_adls')]",
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow5')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          employee as (id as short, name as string, salary as integer)[],",
+						"          grade as short,",
+						"          id as integer,",
+						"          role as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'json',",
+						"     container: 'input',",
+						"     fileName: 'students.json',",
+						"     documentForm: 'singleDocument') ~> source1",
+						"source1 foldDown(unroll(employee, employee),",
+						"     mapColumn(",
+						"          employee_id = employee.id,",
+						"          grade,",
+						"          id,",
+						"          role,",
+						"          emp_name = employee.name,",
+						"          emp_salary = employee.salary",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          employee_id as integer,",
+						"          grade as integer,",
+						"          role as string,",
+						"          name as string,",
+						"          salary as integer",
+						"     ),",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'employee',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          id,",
+						"          employee_id,",
+						"          grade = emp_name,",
+						"          role,",
+						"          name = emp_name,",
+						"          salary = emp_salary",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_storage_adls')]",
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow6')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"linkedService": {
+								"referenceName": "lk_server_sample",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink2",
+							"rejectedDataLinkedService": {
+								"referenceName": "lk_storage_adls",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "pivot1"
+						},
+						{
+							"name": "unpivot1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SaleID as integer,",
+						"          SaleDate as date,",
+						"          Region as string,",
+						"          Category as string,",
+						"          Amount as decimal(10,2)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'SalesData',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> source1",
+						"source(output(",
+						"          id as integer,",
+						"          dept as string,",
+						"          india as integer,",
+						"          usa as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'job_roles',",
+						"     isolationLevel: 'READ_UNCOMMITTED') ~> source2",
+						"source1 pivot(groupBy(SaleID),",
+						"     pivotBy(Region),",
+						"     {} = count(SaleID),",
+						"     columnNaming: '$N$V',",
+						"     lateral: true) ~> pivot1",
+						"source2 unpivot(output(",
+						"          country as string,",
+						"          emp_cnt as integer",
+						"     ),",
+						"     ungroupBy(id,",
+						"          dept),",
+						"     lateral: true,",
+						"     ignoreNullPivots: false) ~> unpivot1",
+						"pivot1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'SalesData',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+						"unpivot1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'table',",
+						"     store: 'sqlserver',",
+						"     schemaName: 'dbo',",
+						"     tableName: 'job_roles',",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     deletable: false,",
+						"     upsertable: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink2"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lk_server_sample')]",
+				"[concat(variables('factoryId'), '/linkedServices/lk_storage_adls')]"
+			]
+		}
+	]
+}
